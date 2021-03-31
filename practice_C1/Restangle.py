@@ -25,4 +25,4 @@ class Circle:
         self.r = r
 
     def get_area_circle(self):
-        return self.r ** 2*3.14
+        return 3.14*(self.r ** 2)
