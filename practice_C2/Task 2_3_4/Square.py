@@ -1,15 +1,17 @@
 class Square:
-    def __init__(self, size):
-        self.size = size
+    _a = None
+    def __init__(self, a):
+        self.a = a
 
-    @size.setter
-    def set_size(self,size):
-        if size > 0:
-            self.a = size
-        elif size == 0:
-            raise ValueError("0 не может быть стороной квадрата)")
-        else:
-            raise ValueError("Длинна стороны должна быть положительна.")
+    @property
+    def _size(self):
+        return self._size
 
+    @a.setter
+    def size(self, value):
+        if value > 0:
+            self._a = value
+
+    @property
     def get_area_square(self):
         return self.a ** 2
