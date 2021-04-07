@@ -184,13 +184,13 @@ class Game:
         lens = [3, 2, 2, 1, 1, 1, 1]
         board = Board()
         attempts = 0
-
+        size = 4
         for l in lens:
             while True:
                 attempts += 1
                 if attempts > 2000:
                     return None
-                ship = Ships(Point(randint(0, self.size), randint(0, self.size)), l, randint(0, 1))
+                ship = Ships(Point(randint(0, size), randint(0, size)), l, randint(0, 1))
                 try:
                     board.add_ship(ship)
                     break
@@ -201,7 +201,6 @@ class Game:
 
 
 g = Game()
-g.zice
 
 print(g.random_place())
 
