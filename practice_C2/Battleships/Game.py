@@ -6,6 +6,7 @@ class Point:
         self.x = x
         self.y = y
 
+    # это метод который сравнивает точки
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
@@ -19,7 +20,7 @@ class BoardExseption(Exception):
 
 class BoardOutExseption(BoardExseption):
     def __str__(self):
-        return "Вы пытаетесь выстрелить за достку"
+        return "Вы пытаетесь выстрелить за доску"
 
 
 class BoardUsedExseption(BoardExseption):
@@ -38,7 +39,7 @@ class Ships:
         self.bow = bow
         self.hp = length
 
-    @property
+    @property  # это метод который возвращает точки корабля
     def dots(self):
         ships_dots = []
         for i in range(self.length):
@@ -81,7 +82,7 @@ class Board:
         return res
 
     def out(self, p):
-        return not ((0 <= p.x <= self.size) and (0 <= p.y <= self.size))
+        return not ((0 <= p.x < self.size) and (0 <= p.y < self.size))
 
     def contour(self, ship, verb=False):
         near = [
@@ -115,7 +116,7 @@ class Board:
             raise BoardUsedExseption
         self.busy.append(p)
         for ship in self.ships:
-            if ship.shooten():
+            if p in ship.dots:
                 ship.hp -= 1
                 self.field[p.x][p.y] = "X"
                 if ship.hp == 0:
@@ -133,6 +134,9 @@ class Board:
 
     def begin(self):
         self.busy = []
+
+    def defeat(self):
+        return self.count == len(self.ships)
 
 
 class Player:
@@ -180,11 +184,19 @@ class User(Player):
 
 
 class Game:
+    def __init__(self):
+        player_board = self.random_board()
+        ai_board = self.random_board()
+        ai_board.hid = True
+
+        self.ai = AI(ai_board, player_board)
+        self.us = User(player_board, ai_board)
+
     def random_place(self):
         lens = [3, 2, 2, 1, 1, 1, 1]
         board = Board()
+        size = 6
         attempts = 0
-        size = 4
         for l in lens:
             while True:
                 attempts += 1
@@ -199,9 +211,59 @@ class Game:
         board.begin()
         return board
 
+    def random_board(self):
+        board = None
+        while board is None:
+            board = self.random_place()
+        return board
+
+    def print_board(self):
+        print("-" * 20)
+        print("Доска пользователя:")
+        print(self.us.board)
+        print("-" * 20)
+        print("Доска копухтера:")
+        print(self.ai.board)
+        print("-" * 20)
+
+
+    def greet(self):
+        print("-------------------")
+        print("  Привет  ")
+        print("-------------------")
+        print(" формат ввода: x y ")
+        print(" x - номер строки  ")
+        print(" y - номер столбца ")
+
+    def loop(self):
+        num = 0
+        while True:
+            self.print_board()
+
+            if num % 2 == 0:
+                repead = self.us.move()
+            else:
+                repead = self.ai.move()
+            if repead:
+                num -= 1
+
+            if self.ai.board.defeat():
+                self.print_board()
+                print("-" * 20)
+                print("Вы победили!")
+                break
+
+            if self.us.board.defeat():
+                self.print_board()
+                print("-" * 20)
+                print("Вы проиграли!")
+                break
+            num += 1
+
+    def start(self):
+        self.greet()
+        self.loop()
+
 
 g = Game()
-
-print(g.random_place())
-
-
+g.start()
